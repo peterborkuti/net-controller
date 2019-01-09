@@ -9,7 +9,7 @@ import { ChildrenOutletContexts } from '@angular/router';
 })
 export class ChildListComponent implements OnInit {
 
-  children = [{name: 'x'}, {name: 'y'}];
+  children = CHILDREN;
 
   empty = '';
 
@@ -23,7 +23,7 @@ export class ChildListComponent implements OnInit {
   }
 
   onAddNewItem(name: string) {
-    this.children.push({name: name});
+    // this.children.push(new Child());
   }
 
 }
