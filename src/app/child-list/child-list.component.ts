@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CHILDREN } from '../../mocks/children';
+import { ChildrenOutletContexts } from '@angular/router';
 
 @Component({
   selector: 'app-child-list',
@@ -8,11 +9,21 @@ import { CHILDREN } from '../../mocks/children';
 })
 export class ChildListComponent implements OnInit {
 
-  children = CHILDREN;
+  children = [{name: 'x'}, {name: 'y'}];
+
+  empty = '';
 
   constructor() { }
 
   ngOnInit() {
+  }
+
+  onChange(name: string) {
+    console.log(name);
+  }
+
+  onAddNewItem(name: string) {
+    this.children.push({name: name});
   }
 
 }

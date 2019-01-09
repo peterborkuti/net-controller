@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { ChildListComponent } from './child-list/child-list.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { MatFormFieldModule, MatListModule, MatInputModule, MatCardModule, MatButtonModule, MatIconModule } from '@angular/material';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -14,7 +16,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatFormFieldModule,
+    MatListModule,
+    MatInputModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]
