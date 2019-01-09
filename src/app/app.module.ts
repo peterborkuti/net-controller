@@ -8,7 +8,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import {
   MatFormFieldModule, MatListModule, MatInputModule, MatCardModule,
-  MatButtonModule, MatIconModule, MatSelectModule, MatOptionModule
+  MatButtonModule, MatIconModule, MatSelectModule, MatOptionModule,
+  MatTableModule
 } from '@angular/material';
 
 import { DeviceListComponent } from './device-list/device-list.component';
@@ -32,7 +33,8 @@ import { TimeListComponent } from './time-list/time-list.component';
     MatButtonModule,
     MatIconModule,
     MatSelectModule,
-    MatOptionModule
+    MatOptionModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

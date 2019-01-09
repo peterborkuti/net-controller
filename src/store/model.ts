@@ -10,16 +10,14 @@ export class ChildDevice {
   constructor(readonly childId: number, readonly deviceId: number) {}
 }
 
-export class DeviceTime {
-  constructor(readonly deviceId: number, readonly time: number) {}
-}
+export class DeviceTime {[deviceId: number]: number}
 
 export class State {
   constructor(
     readonly children: Child[],
     readonly devices: Device[],
     readonly childDevices: ChildDevice[],
-    readonly deviceTimes: DeviceTime[],
+    readonly deviceTimes: DeviceTime,
     readonly defaultTime: number
   ) {}
 }

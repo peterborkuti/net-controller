@@ -1,2 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+/** input element was 180px wide because of .mat-form-field-infix width: 180px **/
+.input-size-marker .mat-form-field-infix {
+  width: auto;
+}
