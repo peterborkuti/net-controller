@@ -12,12 +12,14 @@ import {
 } from '@angular/material';
 
 import { DeviceListComponent } from './device-list/device-list.component';
+import { TimeListComponent } from './time-list/time-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ChildListComponent,
-    DeviceListComponent
+    DeviceListComponent,
+    TimeListComponent
   ],
   imports: [
     BrowserModule,
