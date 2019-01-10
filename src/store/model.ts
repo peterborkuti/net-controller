@@ -1,6 +1,7 @@
 import { createSelector } from '@ngrx/store';
 
 import * as helper from './helper';
+import { addDevice, modDevice } from './helper';
 
 export const DEFAULT_ALLOCATED_TIME = 20;
 
@@ -20,6 +21,8 @@ export class DeviceTime {[deviceId: number]: number}
 
 export const selectState = (globalState: any) => globalState.state;
 export const selectChildren = createSelector(selectState, (state: State) => state.children);
+export const selectDevices = createSelector(selectState, (state: State) => state.devices);
+export const selectChildDevices = createSelector(selectState, (state: State) => state.childDevices);
 
 export class State {
   constructor(
@@ -31,50 +34,32 @@ export class State {
   ) {}
 
   deleteChild(childId: number): State {
-    const newDeviceTime: DeviceTime = Object.assign({}, this.deviceTimes);
-
-    for (const deviceId in newDeviceTime) {
-      if (newDeviceTime[deviceId] === childId) {
-        delete newDeviceTime[deviceId];
-      }
-    }
-
-    return new State(
-      this.children.filter(child => child.id !== childId),
-      this.devices,
-      this.childDevices.filter(childDevice => childDevice.childId !== childId),
-      newDeviceTime,
-      this.defaultTime
-    );
+    return helper.deleteChild(this, childId);
   }
 
   addAnonymChild(): State {
-    const newId = helper.getNewId(this.children);
-    const newChildren: Child[] = this.children.slice();
-
-    newChildren.push(new Child(newId, ''));
-
-    return new State(
-      newChildren,
-      this.devices,
-      this.childDevices,
-      this.deviceTimes,
-      this.defaultTime
-    );
+    return helper.addAnonymChild(this);
   }
 
-modChildName(childId: number, name: string): State {
-    const newChildren: Child[] =
-      this.children.map(
-        child => child.id === childId ? new Child(childId, name) : child
-      );
-
-      return new State(
-      newChildren,
-      this.devices,
-      this.childDevices,
-      this.deviceTimes,
-      this.defaultTime
-    );
+  modChildName(childId: number, name: string): State {
+    return helper.modChildName(this, childId, name);
   }
+
+  addDeviceChild(): State {
+    return this;
+  }
+
+  deleteDevice(deviceId: number): State {
+    return helper.deleteDevice(this, deviceId);
+  }
+
+  addDevice(): State {
+    return helper.addDevice(this);
+  }
+
+  modDevice(deviceId: number, name: string, mac: string): State {
+    return helper.modDevice(this, deviceId, name, mac);
+  }
+
+
 }
