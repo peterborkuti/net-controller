@@ -1,6 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ChildListComponent } from './child-list.component';
+import { Store, StoreModule } from '@ngrx/store';
+import { State } from '../../store/model';
+import { reducer } from '../../store/reducers';
+
 
 describe('ChildListComponent', () => {
   let component: ChildListComponent;
@@ -8,7 +12,8 @@ describe('ChildListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ChildListComponent ]
+      declarations: [ ChildListComponent ],
+      providers: [StoreModule.forRoot({ state: reducer })]
     })
     .compileComponents();
   }));
@@ -21,5 +26,8 @@ describe('ChildListComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should blabla', () => {
   });
 });

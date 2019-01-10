@@ -4,7 +4,7 @@ import { ChildrenOutletContexts } from '@angular/router';
 
 import { Store, select } from '@ngrx/store';
 import { State, Child, selectChildren } from '../../store/model';
-import { DeleteChild, AddAnonymChild } from '../../store/actions';
+import { DeleteChild, AddAnonymChild, ModChildName } from '../../store/actions';
 
 import { Observable } from 'rxjs';
 
@@ -14,10 +14,7 @@ import { Observable } from 'rxjs';
   styleUrls: ['./child-list.component.css']
 })
 export class ChildListComponent implements OnInit {
-
   children$: Observable<Child[]>;
-
-  empty = '';
 
   constructor(private store: Store<State>) {
     this.children$ = store.pipe(select(selectChildren));
@@ -26,15 +23,12 @@ export class ChildListComponent implements OnInit {
   ngOnInit() {
   }
 
-  onChange(name: string) {
-    console.log(name);
+  onModName(childId: number, name: string) {
+    this.store.dispatch(new ModChildName(childId, name));
   }
 
   onAddNewItem() {
-    const action = new AddAnonymChild();
-    console.log('onAddNewItem', action);
-
-    this.store.dispatch(action);
+    this.store.dispatch(new AddAnonymChild());
   }
 
   onDeleteChild(childId: number) {

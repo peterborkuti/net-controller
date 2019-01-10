@@ -54,8 +54,22 @@ export class State {
 
     newChildren.push(new Child(newId, ''));
 
-    console.log('addAnonymChild:', this.children.length < newChildren.length);
     return new State(
+      newChildren,
+      this.devices,
+      this.childDevices,
+      this.deviceTimes,
+      this.defaultTime
+    );
+  }
+
+modChildName(childId: number, name: string): State {
+    const newChildren: Child[] =
+      this.children.map(
+        child => child.id === childId ? new Child(childId, name) : child
+      );
+
+      return new State(
       newChildren,
       this.devices,
       this.childDevices,

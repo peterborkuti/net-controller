@@ -9,8 +9,12 @@
                 <mat-icon aria-label="Delete child">delete</mat-icon>
             </button>
             <mat-form-field>
-                <input matInput [value]="child.name" (input)="onChange(child.id, $event.target.value)">
+                <input matInput #name value="{{child.name}}">
             </mat-form-field>
+            <button (click)="onModName(child.id, name.value)" mat-icon-button color="primary">
+                <mat-icon aria-label="Save name">done</mat-icon>
+            </button>
+
         </mat-list-item>
         <mat-list-item role="listitem">
             <button (click)="onAddNewItem()" mat-raised-button color="primary">Add</button>

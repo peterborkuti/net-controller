@@ -10,6 +10,8 @@ export function reducer(
         return state.deleteChild(action.payload.childId);
     case ActionTypes.AddAnonymChild:
         return state.addAnonymChild();
+    case ActionTypes.ModChildName:
+        return state.modChildName(action.payload.childId, action.payload.childName);
     default:
         return state;
   }
