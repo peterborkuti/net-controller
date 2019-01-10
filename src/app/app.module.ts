@@ -12,6 +12,9 @@ import {
 } from '@angular/material';
 
 import { StoreModule } from '@ngrx/store';
+import { reducer } from '../store/reducers';
+
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 import { ChildListComponent } from './child-list/child-list.component';
 import { DeviceListComponent } from './device-list/device-list.component';
@@ -37,7 +40,8 @@ import { TimeListComponent } from './time-list/time-list.component';
     MatSelectModule,
     MatOptionModule,
     MatTableModule,
-    StoreModule.forRoot({})
+    [StoreModule.forRoot({ state: reducer })],
+    StoreDevtoolsModule.instrument()
   ],
   providers: [],
   bootstrap: [AppComponent]

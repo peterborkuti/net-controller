@@ -2,6 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CHILDREN } from '../../mocks/children';
 import { ChildrenOutletContexts } from '@angular/router';
 
+import { Store, select } from '@ngrx/store';
+import { State, Child, selectChildren } from '../../store/model';
+import { DeleteChild, AddAnonymChild } from '../../store/actions';
+
+import { Observable } from 'rxjs';
+
 @Component({
   selector: 'app-child-list',
   templateUrl: './child-list.component.html',
@@ -9,11 +15,13 @@ import { ChildrenOutletContexts } from '@angular/router';
 })
 export class ChildListComponent implements OnInit {
 
-  children = CHILDREN;
+  children$: Observable<Child[]>;
 
   empty = '';
 
-  constructor() { }
+  constructor(private store: Store<State>) {
+    this.children$ = store.pipe(select(selectChildren));
+  }
 
   ngOnInit() {
   }
@@ -22,8 +30,15 @@ export class ChildListComponent implements OnInit {
     console.log(name);
   }
 
-  onAddNewItem(name: string) {
-    // this.children.push(new Child());
+  onAddNewItem() {
+    const action = new AddAnonymChild();
+    console.log('onAddNewItem', action);
+
+    this.store.dispatch(action);
+  }
+
+  onDeleteChild(childId: number) {
+    this.store.dispatch(new DeleteChild(childId));
   }
 
 }
