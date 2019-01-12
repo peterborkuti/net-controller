@@ -9,7 +9,9 @@ export enum ActionTypes {
   ModDevice = '[DeviceList] Modify a device',
   AddDevice = '[DeviceList] Add an empty device',
 
-  SetDeviceChild = '[DeviceList] set a child-device relation'
+  SetDeviceChild = '[DeviceList] set a child-device relation',
+
+  SetAllocatedTime = '[TimeList] set device-allocated time'
 }
 
 export class ModChildName implements Action {
@@ -67,6 +69,15 @@ export class SetDeviceChild implements Action {
   }
 }
 
+export class SetAllocatedTime implements Action {
+  readonly type = ActionTypes.SetAllocatedTime;
+  readonly payload: { deviceId: number, allocatedTime: number };
+
+  constructor(deviceId: number, allocatedTime: number) {
+    this.payload = { deviceId, allocatedTime };
+  }
+}
+
 export type ActionsUnion =  ModChildName | AddAnonymChild | DeleteChild |
                             AddDevice | ModDevice | DeleteDevice |
-                            SetDeviceChild;
+                            SetDeviceChild | SetAllocatedTime;

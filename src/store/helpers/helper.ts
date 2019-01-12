@@ -1,4 +1,4 @@
-import { Dictionary, FlatDictionary } from '../model';
+import { Dictionary, FlatDictionary , Device, DeviceTime, DeviceTimeDisplay} from '../model';
 import { isArray } from 'util';
 /**
  * It returns with an id for using when adding new element to a Dictionary.
@@ -43,3 +43,15 @@ export function dictionaryToArray<T>(dict: Dictionary<T>): FlatDictionary<T>[] {
 
   return Object.keys(dict).map(i => +i).map(i => ({id: i, e: dict[i]}));
 }
+
+export function getDeviceTimeList(device: FlatDictionary<Device>[] , deviceTime: DeviceTime): DeviceTimeDisplay[] {
+  return device.map(d =>
+    (
+      {
+        id: d.id, device: d.e,
+        allocatedTime: (deviceTime[d.id] && deviceTime[d.id].allocated) || 0,
+        remainingTime: (deviceTime[d.id] && deviceTime[d.id].remaining) || 0
+      }
+    ));
+}
+

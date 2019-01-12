@@ -8,33 +8,39 @@
 
       <ng-container matColumnDef="deviceName">
         <th mat-header-cell *matHeaderCellDef> Device </th>
-        <td mat-cell *matCellDef="let element"> {{element.deviceName}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.device.name}} </td>
       </ng-container>
 
       <ng-container matColumnDef="allocatedTime">
         <th mat-header-cell *matHeaderCellDef> Allocated<br>Time </th>
         <td mat-cell *matCellDef="let element" class="padding">
             <mat-form-field class="input-size-marker">
-                <input matInput size="5"
-                  [value]="element.allocatedTime"
-                  (input)="onTimeChange(element.deviceId, $event.target.value)"
+                <input #allocatedTime matInput size="5"
+                  [value]="element.allocatedTime || 0"
+                  (input)="onTimeChange(element.id, $event.target.value)"
                 >
             </mat-form-field>
+            <button (click)="onModAllocatedTime(element.id, allocatedTime.value)" mat-icon-button color="primary">
+                <mat-icon aria-label="Save name">done</mat-icon>
+            </button>
+        </td>
+      </ng-container>
+
+
+      <ng-container matColumnDef="remainingTime">
+        <th mat-header-cell *matHeaderCellDef> Remaining<br>Time </th>
+        <td mat-cell *matCellDef="let element" class="padding">
+          {{element.remainingTime || 0}}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="addExtraTime">
         <th mat-header-cell *matHeaderCellDef> Add extra<br>time </th>
         <td mat-cell *matCellDef="let element">
-          <button mat-raised-button color="primary" (click)="onAddExtraTime(element.deviceId)">
+          <button mat-raised-button color="primary" (click)="onAddExtraTime(element.id)">
               <mat-icon>add_box</mat-icon>
           </button>
         </td>
-      </ng-container>
-
-      <ng-container matColumnDef="remaining">
-        <th mat-header-cell *matHeaderCellDef> Remaining<br>time </th>
-        <td mat-cell *matCellDef="let element"> {{element.remaining}} </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

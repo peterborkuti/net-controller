@@ -1,5 +1,5 @@
-import { State, Child, DEFAULT_STATE, DeviceId, Device } from './model';
-import { ActionsUnion, ActionTypes } from './actions';
+import { State, Child, DEFAULT_STATE, DeviceId, Device, Time } from './model';
+import { ActionsUnion, ActionTypes, SetAllocatedTime } from './actions';
 import * as childHelper from './helpers/child-helper';
 import { addToDictionary, modElementInDictionary, deleteFromDictionary } from './helpers/helper';
 
@@ -50,6 +50,17 @@ export function reducer(
 
       return Object.assign({}, state,
         { deviceChild: modElementInDictionary(state.deviceChild, deviceId, childId) });
+    }
+
+    case ActionTypes.SetAllocatedTime: {
+      const deviceId = action.payload.deviceId;
+      const allocatedTime = action.payload.allocatedTime;
+      const time: Time = {
+        allocated: allocatedTime,
+        remaining: (state.deviceTime[deviceId] && state.deviceTime[deviceId].remaining) || 0 };
+
+      return Object.assign({}, state,
+        { deviceTime: modElementInDictionary(state.deviceTime, deviceId, time) });
     }
 
     default:
