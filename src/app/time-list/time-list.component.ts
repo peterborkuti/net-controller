@@ -1,17 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Store, select  } from '@ngrx/store';
-import { State, Child, FlatDictionary, Device, DeviceTimeDisplay} from '../../store/model';
+import { State, DeviceTimeDisplay} from '../../store/model';
 
 import { Observable } from 'rxjs';
 import { SetAllocatedTime, AddExtraTime } from '../../store/actions';
-import { selectDeviceTimeDisplay, selectFlatDevices } from '../../store/selectors';
-
-
-import { DEVICES } from '../../mocks/devices';
-import { CHILDREN } from '../../mocks/children';
-import { DEVICETIMES } from '../../mocks/time';
-import { DEVICETIMEDISPLAY } from '../../mocks/devicetimedisplay';
+import { selectDeviceTimeDisplay } from '../../store/selectors';
 
 @Component({
   selector: 'app-time-list',
@@ -19,15 +13,10 @@ import { DEVICETIMEDISPLAY } from '../../mocks/devicetimedisplay';
   styleUrls: ['./time-list.component.css']
 })
 export class TimeListComponent implements OnInit {
-  devices = DEVICES;
-  deviceTimes = DEVICETIMES;
-  remainingTime = {};
-  devices$: Observable<FlatDictionary<Device>[]>;
   deviceTimeDisplay$: Observable<DeviceTimeDisplay[]>;
 
-
   dataSource: DeviceTimeDisplay[];
-  displayedColumns: string[] = ['deviceName', 'allocatedTime', 'addExtraTime', 'remainingTime' ];
+  displayedColumns: string[] = ['deviceName', 'allocatedTime', 'remainingTime', 'addExtraTime' ];
 
   constructor(private store: Store<State>) {
     this.deviceTimeDisplay$ = store.pipe(select(selectDeviceTimeDisplay));
@@ -40,7 +29,6 @@ export class TimeListComponent implements OnInit {
 
   onAddExtraTime(deviceId: number) {
     this.store.dispatch(new AddExtraTime(deviceId));
-    console.log('addExtraTime', deviceId);
   }
 
   onModAllocatedTime(deviceId: number, allocatedTime: number) {

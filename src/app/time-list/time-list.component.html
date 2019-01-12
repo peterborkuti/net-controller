@@ -17,7 +17,6 @@
             <mat-form-field class="input-size-marker">
                 <input #allocatedTime matInput size="5"
                   [value]="element.allocatedTime || 0"
-                  (input)="onTimeChange(element.id, $event.target.value)"
                 >
             </mat-form-field>
             <button (click)="onModAllocatedTime(element.id, allocatedTime.value)" mat-icon-button color="primary">
@@ -25,7 +24,6 @@
             </button>
         </td>
       </ng-container>
-
 
       <ng-container matColumnDef="remainingTime">
         <th mat-header-cell *matHeaderCellDef> Remaining<br>Time </th>
