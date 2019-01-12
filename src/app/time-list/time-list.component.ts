@@ -4,7 +4,7 @@ import { Store, select  } from '@ngrx/store';
 import { State, Child, FlatDictionary, Device, DeviceTimeDisplay} from '../../store/model';
 
 import { Observable } from 'rxjs';
-import { SetAllocatedTime } from '../../store/actions';
+import { SetAllocatedTime, AddExtraTime } from '../../store/actions';
 import { selectDeviceTimeDisplay, selectFlatDevices } from '../../store/selectors';
 
 
@@ -27,7 +27,7 @@ export class TimeListComponent implements OnInit {
 
 
   dataSource: DeviceTimeDisplay[];
-  displayedColumns: string[] = ['deviceName', 'allocatedTime', 'addExtraTime'];
+  displayedColumns: string[] = ['deviceName', 'allocatedTime', 'addExtraTime', 'remainingTime' ];
 
   constructor(private store: Store<State>) {
     this.deviceTimeDisplay$ = store.pipe(select(selectDeviceTimeDisplay));
@@ -38,11 +38,8 @@ export class TimeListComponent implements OnInit {
   ngOnInit() {
   }
 
-  onTimeChange(deviceId: number, value: number) {
-    console.log('onTimeChange', deviceId, value);
-  }
-
   onAddExtraTime(deviceId: number) {
+    this.store.dispatch(new AddExtraTime(deviceId));
     console.log('addExtraTime', deviceId);
   }
 

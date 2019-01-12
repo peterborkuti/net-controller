@@ -11,7 +11,8 @@ export enum ActionTypes {
 
   SetDeviceChild = '[DeviceList] set a child-device relation',
 
-  SetAllocatedTime = '[TimeList] set device-allocated time'
+  SetAllocatedTime = '[TimeList] set device-allocated time',
+  AddExtraTime = '[TimeList] add extra time for a device remaining time',
 }
 
 export class ModChildName implements Action {
@@ -78,6 +79,14 @@ export class SetAllocatedTime implements Action {
   }
 }
 
+export class AddExtraTime implements Action {
+  readonly type = ActionTypes.AddExtraTime;
+  readonly payload: { deviceId: number};
+
+  constructor(deviceId: number) {
+    this.payload = { deviceId };
+  }
+}
 export type ActionsUnion =  ModChildName | AddAnonymChild | DeleteChild |
                             AddDevice | ModDevice | DeleteDevice |
-                            SetDeviceChild | SetAllocatedTime;
+                            SetDeviceChild | SetAllocatedTime | AddExtraTime;

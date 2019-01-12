@@ -63,6 +63,17 @@ export function reducer(
         { deviceTime: modElementInDictionary(state.deviceTime, deviceId, time) });
     }
 
+    case ActionTypes.AddExtraTime: {
+      const deviceId = action.payload.deviceId;
+      const time: Time = {
+        allocated: (state.deviceTime[deviceId] && state.deviceTime[deviceId].allocated) || 0,
+        remaining: (state.deviceTime[deviceId] && state.deviceTime[deviceId].remaining + 1) || 1
+      };
+
+      return Object.assign({}, state,
+        { deviceTime: modElementInDictionary(state.deviceTime, deviceId, time) });
+    }
+
     default:
       return state;
   }
