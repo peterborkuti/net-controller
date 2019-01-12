@@ -3,7 +3,9 @@ import { CHILDREN } from '../../mocks/children';
 import { ChildrenOutletContexts } from '@angular/router';
 
 import { Store, select } from '@ngrx/store';
-import { State, Child, selectChildren } from '../../store/model';
+import { State, Child, FlatDictionary } from '../../store/model';
+import { selectFlatChildren } from '../../store/selectors';
+
 import { DeleteChild, AddAnonymChild, ModChildName } from '../../store/actions';
 
 import { Observable } from 'rxjs';
@@ -14,10 +16,10 @@ import { Observable } from 'rxjs';
   styleUrls: ['./child-list.component.css']
 })
 export class ChildListComponent implements OnInit {
-  children$: Observable<Child[]>;
+  children$: Observable<FlatDictionary<Child>[]>;
 
   constructor(private store: Store<State>) {
-    this.children$ = store.pipe(select(selectChildren));
+    this.children$ = store.pipe(select(selectFlatChildren));
   }
 
   ngOnInit() {

@@ -9,7 +9,7 @@ export enum ActionTypes {
   ModDevice = '[DeviceList] Modify a device',
   AddDevice = '[DeviceList] Add an empty device',
 
-  SetDeviceChild = '[DeviceList] set a device-child relation'
+  SetDeviceChild = '[DeviceList] set a child-device relation'
 }
 
 export class ModChildName implements Action {

@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { DEVICES } from '../../mocks/devices';
-import { CHILDREN } from '../../mocks/children';
 
 import { Store, select  } from '@ngrx/store';
-import { State, Child, Device, selectChildren, selectDevices, ChildDevice, selectChildDevices } from '../../store/model';
+import { State, Child, FlatDictionary, Device, DeviceChild} from '../../store/model';
 
 import { Observable } from 'rxjs';
 import { DeleteDevice, ModDevice, AddDevice, SetDeviceChild } from '../../store/actions';
+import { selectFlatChildren, selectDeviceChild, selectFlatDevices } from '../../store/selectors';
 
 @Component({
   selector: 'app-device-list',
@@ -15,17 +14,14 @@ import { DeleteDevice, ModDevice, AddDevice, SetDeviceChild } from '../../store/
 })
 export class DeviceListComponent implements OnInit {
 
-  children$: Observable<Child[]>;
-  devices$: Observable<Device[]>;
-  childDevices$: Observable<ChildDevice[]>;
-  children = CHILDREN;
-  devices = DEVICES;
-
+  children$: Observable<FlatDictionary<Child>[]>;
+  devices$: Observable<FlatDictionary<Device>[]>;
+  deviceChild$: Observable<DeviceChild>;
 
   constructor(private store: Store<State>) {
-    this.children$ = store.pipe(select(selectChildren));
-    this.devices$ = store.pipe(select(selectDevices));
-    this.childDevices$ = store.pipe(select(selectChildDevices));
+    this.children$ = store.pipe(select(selectFlatChildren));
+    this.devices$ = store.pipe(select(selectFlatDevices));
+    this.deviceChild$ = store.pipe(select(selectDeviceChild));
    }
 
   ngOnInit() {

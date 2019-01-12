@@ -31,9 +31,16 @@ export class TimeListComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.dataSource = this.devices.map(d => ({deviceId: d.id, deviceName: d.name,
-        allocatedTime: this.deviceTimes[d.id], addExtraTime: d.id,
-        remaining: 0}));
+    this.dataSource = Object.keys(this.devices).map(did => +did).map(
+        did => (
+          {
+            deviceId: did,
+            deviceName: this.devices[did].name,
+            allocatedTime: this.deviceTimes[did],
+            addExtraTime: did,
+            remaining: 0
+          }));
+
   }
 
   onTimeChange(deviceId: number, value: number) {

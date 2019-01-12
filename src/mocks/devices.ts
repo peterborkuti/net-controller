@@ -1,7 +1,7 @@
-import { Device } from '../store/model';
+import { Devices } from '../store/model';
 
-export const DEVICES: Device[] = [
-  new Device(100, 'Dell laptop - new', '00:12:10:00:00'),
-  new Device(101, 'Dell laptop - old', 'AA:12:10:00:00'),
-  new Device(102, 'Redmi 5 Phone - old', '00:12:10:00:00')
-];
+export const DEVICES: Devices = {};
+DEVICES[100] = { name: 'Dell1', mac : '00:00:00:00'};
+DEVICES[101] = { name: 'Dell2', mac : '01:00:00:00'};
+DEVICES[102] = { name: 'Dell3', mac : '02:00:00:00'};
+

@@ -9,7 +9,7 @@
                 <mat-icon aria-label="Delete child">delete</mat-icon>
             </button>
             <mat-form-field>
-                <input matInput #name value="{{child.name}}">
+                <input matInput #name value="{{child.e.name}}">
             </mat-form-field>
             <button (click)="onModName(child.id, name.value)" mat-icon-button color="primary">
                 <mat-icon aria-label="Save name">done</mat-icon>

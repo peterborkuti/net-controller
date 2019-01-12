@@ -10,18 +10,20 @@
               </button>
 
               <mat-form-field>
-                  <input #deviceName matInput placeholder="name" [value]="device.name">
+                  <input #deviceName matInput placeholder="name" [value]="device.e.name">
               </mat-form-field>
 
               <mat-form-field>
                   <input #deviceMac matInput placeholder="00:00:00:00"
-                          size="11" [value]="device.mac">
+                          size="11" [value]="device.e.mac">
               </mat-form-field>
 
               <mat-form-field>
-                  <mat-select (selectionChange)="onSetDeviceChild(device.id, $event.value)">
+                  <mat-select
+                    [value]="(deviceChild$|async)[device.id]"
+                    (selectionChange)="onSetDeviceChild(device.id, $event.value)">
                     <mat-option *ngFor="let child of children$|async" [value]="child.id">
-                      {{child.name}}
+                      {{child.e.name}}
                     </mat-option>
                   </mat-select>
               </mat-form-field>
