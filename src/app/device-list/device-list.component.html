@@ -18,6 +18,11 @@
                           size="11" [value]="device.e.mac">
               </mat-form-field>
 
+              <button (click)="onSaveChanges(device.id, deviceName.value, deviceMac.value)"
+                  mat-icon-button color="primary">
+                <mat-icon aria-label="Save name">done</mat-icon>
+              </button>
+
               <mat-form-field>
                   <mat-select
                     [value]="(deviceChild$|async)[device.id]"
@@ -27,11 +32,6 @@
                     </mat-option>
                   </mat-select>
               </mat-form-field>
-
-              <button (click)="onSaveChanges(device.id, deviceName.value, deviceMac.value)"
-                      mat-icon-button color="primary">
-                <mat-icon aria-label="Save name">done</mat-icon>
-              </button>
 
           </mat-list-item>
           <mat-list-item role="listitem">
