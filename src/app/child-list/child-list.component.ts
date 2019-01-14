@@ -19,6 +19,7 @@ export class ChildListComponent implements OnInit {
   children$: Observable<FlatDictionary<Child>[]>;
 
   constructor(private store: Store<State>) {
+    console.log('CALLED');
     this.children$ = store.pipe(select(selectFlatChildren));
   }
 
