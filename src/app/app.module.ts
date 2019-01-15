@@ -5,6 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+
 import {
   MatFormFieldModule, MatListModule, MatInputModule, MatCardModule,
   MatButtonModule, MatIconModule, MatSelectModule, MatOptionModule,
@@ -41,7 +43,8 @@ import { TimeListComponent } from './time-list/time-list.component';
     MatOptionModule,
     MatTableModule,
     [StoreModule.forRoot({ state: reducer })],
-    StoreDevtoolsModule.instrument()
+    StoreDevtoolsModule.instrument(),
+    FormsModule, ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
