@@ -9,6 +9,7 @@ import { selectFlatChildren } from '../../store/selectors';
 import { DeleteChild, AddAnonymChild, ModChildName } from '../../store/actions';
 
 import { Observable } from 'rxjs';
+import { FormControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-child-list',
@@ -17,25 +18,43 @@ import { Observable } from 'rxjs';
 })
 export class ChildListComponent implements OnInit {
   children$: Observable<FlatDictionary<Child>[]>;
+  childrenArray: FlatDictionary<Child>[];
 
-  constructor(private store: Store<State>) {
-    console.log('CALLED');
+  form: FormGroup = new FormGroup({
+    children: new FormArray([])
+  });
+
+  constructor(private store: Store<State>, private formBuilder: FormBuilder) {
     this.children$ = store.pipe(select(selectFlatChildren));
+
+    this.children$.subscribe(children => this.childrenArray = children);
+
+    this.children$.subscribe((children) => {
+      const items = this.children;
+      while (items.length > 0) {items.removeAt(0); }
+      this.buildFormControlArray(children).forEach(g => items.push(g));
+    });
   }
 
   ngOnInit() {
   }
 
-  onModName(childId: number, name: string) {
-    this.store.dispatch(new ModChildName(childId, name));
+  get children(): FormArray { return this.form.get('children') as FormArray; }
+
+  buildFormControlArray(children: FlatDictionary<Child>[]): FormControl[] {
+    return children.map(child => this.formBuilder.control(child.e.name));
+  }
+
+  onModName(index: number, name: string) {
+    this.store.dispatch(new ModChildName(this.childrenArray[index].id, name));
   }
 
   onAddNewItem() {
     this.store.dispatch(new AddAnonymChild());
   }
 
-  onDeleteChild(childId: number) {
-    this.store.dispatch(new DeleteChild(childId));
+  onDeleteChild(index: number) {
+    this.store.dispatch(new DeleteChild(this.childrenArray[index].id));
   }
 
 }

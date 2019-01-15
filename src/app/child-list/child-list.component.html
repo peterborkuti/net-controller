@@ -3,17 +3,17 @@
       <mat-card-title>Children</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <mat-list role="list">
-        <mat-list-item role="listitem" *ngFor="let child of children$|async; let i = index">
-            <button (click)="onDeleteChild(child.id)" mat-icon-button color="primary">
-                <mat-icon aria-label="Delete child">delete</mat-icon>
-            </button>
-            <mat-form-field>
-                <input matInput #name value="{{child.e.name}}">
-            </mat-form-field>
-            <button (click)="onModName(child.id, name.value)" mat-icon-button color="primary">
-                <mat-icon aria-label="Save name">done</mat-icon>
-            </button>
+    <mat-list role="list" [formGroup]="form">
+        <mat-list-item role="listitem" formArrayName="children" *ngFor="let child of children.controls; index as i">
+              <button class="delete" (click)="onDeleteChild(i)" mat-icon-button color="primary">
+                  <mat-icon aria-label="Delete child">delete</mat-icon>
+              </button>
+              <mat-form-field>
+                  <input matInput #nameInput [formControlName]="i">
+              </mat-form-field>
+              <button class="done" (click)="onModName(i, nameInput.value)" mat-icon-button color="primary">
+                  <mat-icon aria-label="Save name">done</mat-icon>
+              </button>
 
         </mat-list-item>
         <mat-list-item role="listitem">
