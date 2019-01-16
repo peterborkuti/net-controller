@@ -81,7 +81,7 @@ describe('DeviceListComponent', () => {
   it('should use ActionTypes.ModChildName when user mods a child', () => {
     addDevice();
 
-    component.devices.controls[0].setValue({id: 10, name: 'xyz', mac: '123'});
+    component.devices.controls[0].setValue({id: 0, name: 'xyz', mac: '123'});
 
     fixture.detectChanges();
 
@@ -90,6 +90,6 @@ describe('DeviceListComponent', () => {
     const doneButton = fixture.nativeElement.querySelector('button.done');
     doneButton.click();
 
-    expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new ModDevice(10, 'xyz', '123'));
+    expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new ModDevice(0, 'xyz', '123'));
   });
 });
