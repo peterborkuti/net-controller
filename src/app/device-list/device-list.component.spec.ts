@@ -14,7 +14,7 @@ import {
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AddAnonymChild, ModChildName, DeleteChild } from '../../store/actions';
+import { AddAnonymChild, ModChildName, DeleteChild, AddDevice, ModDevice } from '../../store/actions';
 
 import { FormsModule, ReactiveFormsModule, FormControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
@@ -63,4 +63,33 @@ describe('DeviceListComponent', () => {
 
     fixture.detectChanges();
   }
+
+  it('should use ActionTypes.AddAnonymChild when user adds a child', () => {
+    addDevice();
+    expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new AddDevice());
+  });
+
+  it('should add a new row when user adds a child', () => {
+    expect(component.devices.controls.length).toBe(0);
+
+    addDevice();
+
+    expect(component.devices.controls.length).toBe(1);
+  });
+
+
+  it('should use ActionTypes.ModChildName when user mods a child', () => {
+    addDevice();
+
+    component.devices.controls[0].setValue({id: 10, name: 'xyz', mac: '123'});
+
+    fixture.detectChanges();
+
+    reducerSpy.calls.reset();
+
+    const doneButton = fixture.nativeElement.querySelector('button.done');
+    doneButton.click();
+
+    expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new ModDevice(10, 'xyz', '123'));
+  });
 });
