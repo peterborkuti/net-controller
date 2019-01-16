@@ -3,39 +3,40 @@
         <mat-card-title>Devices</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <mat-list role="list">
-          <mat-list-item role="listitem" *ngFor="let device of devices$|async; let i = index">
-              <button (click)="onDeleteDevice(device.id)" mat-icon-button color="primary">
+      <mat-list role="list" [formGroup]="form">
+          <mat-list-item role="listitem" formArrayName="devices" *ngFor="let device of devices.controls; index as i;">
+            <div [formGroupName]="i" *ngIf="(device.get('id').value || '0') as id">
+              <button (click)="onDeleteDevice(id)" mat-icon-button color="primary">
                   <mat-icon aria-label="Delete device">delete</mat-icon>
               </button>
 
               <mat-form-field>
-                  <input #deviceName matInput placeholder="name" [value]="device.e.name">
+                  <input #deviceName matInput placeholder="name" formControlName="name">
               </mat-form-field>
 
               <mat-form-field>
                   <input #deviceMac matInput placeholder="00:00:00:00"
-                          size="11" [value]="device.e.mac">
+                          size="11"  formControlName="mac">
               </mat-form-field>
 
-              <button (click)="onSaveChanges(device.id, deviceName.value, deviceMac.value)"
+              <button (click)="onSaveChanges(id, deviceName.value, deviceMac.value)"
                   mat-icon-button color="primary">
                 <mat-icon aria-label="Save name">done</mat-icon>
               </button>
 
               <mat-form-field>
                   <mat-select
-                    [value]="(deviceChild$|async)[device.id]"
-                    (selectionChange)="onSetDeviceChild(device.id, $event.value)">
+                    [value]="(deviceChild$|async)[id]"
+                    (selectionChange)="onSetDeviceChild(id, $event.value)">
                     <mat-option *ngFor="let child of children$|async" [value]="child.id">
                       {{child.e.name}}
                     </mat-option>
                   </mat-select>
               </mat-form-field>
-
+            </div>
           </mat-list-item>
           <mat-list-item role="listitem">
-              <button (click)="onAddNewDeviceChild()" mat-raised-button color="primary">Add</button>
+              <button class="add-device" (click)="onAddNewDeviceChild()" mat-raised-button color="primary">Add</button>
           </mat-list-item>
       </mat-list>
     </mat-card-content>

@@ -55,4 +55,12 @@ describe('DeviceListComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  function addDevice(): void {
+    const button = fixture.nativeElement.querySelector('button.add-device');
+
+    button.click();
+
+    fixture.detectChanges();
+  }
 });
