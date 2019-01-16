@@ -18,7 +18,6 @@ import { FormControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 })
 export class ChildListComponent implements OnInit {
   children$: Observable<FlatDictionary<Child>[]>;
-  childrenArray: FlatDictionary<Child>[];
 
   form: FormGroup = new FormGroup({
     children: new FormArray([])
@@ -26,8 +25,6 @@ export class ChildListComponent implements OnInit {
 
   constructor(private store: Store<State>, private formBuilder: FormBuilder) {
     this.children$ = store.pipe(select(selectFlatChildren));
-
-    this.children$.subscribe(children => this.childrenArray = children);
 
     this.children$.subscribe((children) => {
       const items = this.children;
@@ -41,20 +38,20 @@ export class ChildListComponent implements OnInit {
 
   get children(): FormArray { return this.form.get('children') as FormArray; }
 
-  buildFormControlArray(children: FlatDictionary<Child>[]): FormControl[] {
-    return children.map(child => this.formBuilder.control(child.e.name));
+  buildFormControlArray(children: FlatDictionary<Child>[]): FormGroup[] {
+    return children.map(child => this.formBuilder.group({id: child.id, name: child.e.name}));
   }
 
-  onModName(index: number, name: string) {
-    this.store.dispatch(new ModChildName(this.childrenArray[index].id, name));
+  onModName(childId: number, name: string) {
+    this.store.dispatch(new ModChildName(childId, name));
   }
 
   onAddNewItem() {
     this.store.dispatch(new AddAnonymChild());
   }
 
-  onDeleteChild(index: number) {
-    this.store.dispatch(new DeleteChild(this.childrenArray[index].id));
+  onDeleteChild(childId: number) {
+    this.store.dispatch(new DeleteChild(childId));
   }
 
 }

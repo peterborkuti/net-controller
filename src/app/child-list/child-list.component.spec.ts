@@ -82,7 +82,7 @@ describe('ChildListComponent', () => {
   it('should use ActionTypes.ModChildName when user mods a child', () => {
     addChild();
 
-    component.children.controls[0].setValue('xyz');
+    component.children.controls[0].setValue({id: 0, name: 'xyz'});
 
     fixture.detectChanges();
 
