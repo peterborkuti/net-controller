@@ -5,6 +5,8 @@ import { Store, StoreModule } from '@ngrx/store';
 import { State } from '../../store/model';
 import * as MyReducer from '../../store/reducers';
 
+import { click } from '../../utils/spec-utils';
+
 import {
   MatFormFieldModule, MatListModule, MatInputModule, MatCardModule,
   MatButtonModule, MatIconModule, MatSelectModule, MatOptionModule,
@@ -54,11 +56,7 @@ describe('ChildListComponent', () => {
   });
 
   function addChild(): void {
-    const button = fixture.nativeElement.querySelector('button.add-child');
-
-    button.click();
-
-    fixture.detectChanges();
+    click(fixture, 'add-child');
   }
 
   it('should create', () => {
@@ -88,8 +86,7 @@ describe('ChildListComponent', () => {
 
     reducerSpy.calls.reset();
 
-    const doneButton = fixture.nativeElement.querySelector('button.done');
-    doneButton.click();
+    click(fixture, 'done');
 
     expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new ModChildName(0, 'xyz'));
   });
@@ -99,13 +96,9 @@ describe('ChildListComponent', () => {
 
     reducerSpy.calls.reset();
 
-    const deleteButton = fixture.nativeElement.querySelector('button.delete');
-    deleteButton.click();
+    click(fixture, 'delete');
 
     expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new DeleteChild(0));
-
-    fixture.detectChanges();
-
     expect(component.children.controls.length).toBe(0);
   });
 });
