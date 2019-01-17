@@ -6,7 +6,7 @@
       <mat-list role="list" [formGroup]="form">
           <mat-list-item role="listitem" formArrayName="devices" *ngFor="let device of devices.controls; index as i;">
             <div [formGroupName]="i" *ngIf="(device.get('id').value || '0') as id">
-              <button (click)="onDeleteDevice(+id)" mat-icon-button color="primary">
+              <button class="delete" (click)="onDeleteDevice(+id)" mat-icon-button color="primary">
                   <mat-icon aria-label="Delete device">delete</mat-icon>
               </button>
 

@@ -14,9 +14,11 @@ import {
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AddAnonymChild, ModChildName, DeleteChild, AddDevice, ModDevice } from '../../store/actions';
+import { AddDevice, ModDevice, DeleteDevice } from '../../store/actions';
 
-import { FormsModule, ReactiveFormsModule, FormControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+import { click } from '../../utils/spec-utils';
 
 describe('DeviceListComponent', () => {
   let component: DeviceListComponent;
@@ -57,19 +59,15 @@ describe('DeviceListComponent', () => {
   });
 
   function addDevice(): void {
-    const button = fixture.nativeElement.querySelector('button.add-device');
-
-    button.click();
-
-    fixture.detectChanges();
+    click(fixture, 'add-device');
   }
 
-  it('should use ActionTypes.AddAnonymChild when user adds a child', () => {
+  it('should use ActionTypes.AddDevice when user adds a device', () => {
     addDevice();
     expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new AddDevice());
   });
 
-  it('should add a new row when user adds a child', () => {
+  it('should add a new row when user adds a device', () => {
     expect(component.devices.controls.length).toBe(0);
 
     addDevice();
@@ -78,7 +76,7 @@ describe('DeviceListComponent', () => {
   });
 
 
-  it('should use ActionTypes.ModChildName when user mods a child', () => {
+  it('should use ActionTypes.ModDevice when user mods a device', () => {
     addDevice();
 
     component.devices.controls[0].setValue({id: 0, name: 'xyz', mac: '123'});
@@ -87,9 +85,21 @@ describe('DeviceListComponent', () => {
 
     reducerSpy.calls.reset();
 
-    const doneButton = fixture.nativeElement.querySelector('button.done');
-    doneButton.click();
+    click(fixture, 'done');
 
     expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new ModDevice(0, 'xyz', '123'));
+  });
+
+  it('should delete a device', () => {
+    addDevice();
+
+    expect(component.devices.controls.length).toBe(1);
+
+    reducerSpy.calls.reset();
+
+    click(fixture, 'delete');
+
+    expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new DeleteDevice(0));
+    expect(component.devices.controls.length).toBe(0);
   });
 });
