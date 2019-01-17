@@ -5,16 +5,13 @@
   <mat-card-content>
     <mat-list role="list" [formGroup]="form">
         <mat-list-item role="listitem" formArrayName="children" *ngFor="let child of children.controls; index as i">
-             <div [formGroupName]="i" *ngIf="(child.get('id').value || '0') as id">
-              <button class="delete" (click)="onDeleteChild(+id)" mat-icon-button color="primary">
+             <div [formGroupName]="i">
+              <button class="delete" (click)="onDeleteChild(child.get('id').value)" mat-icon-button color="primary">
                   <mat-icon aria-label="Delete child">delete</mat-icon>
               </button>
               <mat-form-field>
                   <input matInput #nameInput formControlName="name">
               </mat-form-field>
-              <button class="done" (click)="onModName(+id, nameInput.value)" mat-icon-button color="primary">
-                  <mat-icon aria-label="Save name">done</mat-icon>
-              </button>
             </div>
         </mat-list-item>
         <mat-list-item role="listitem">

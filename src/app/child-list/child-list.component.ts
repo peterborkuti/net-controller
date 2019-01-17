@@ -8,8 +8,10 @@ import { selectFlatChildren } from '../../store/selectors';
 
 import { DeleteChild, AddAnonymChild, ModChildName } from '../../store/actions';
 
-import { Observable } from 'rxjs';
-import { FormControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { AbstractControl, FormControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { TEXT_INPUT_DEBOUNCE_TIME_MS } from '../const';
 
 @Component({
   selector: 'app-child-list',
@@ -23,13 +25,24 @@ export class ChildListComponent implements OnInit {
     children: new FormArray([])
   });
 
+  private modChildSubscribers: Subscription[] = [];
+
   constructor(private store: Store<State>, private formBuilder: FormBuilder) {
     this.children$ = store.pipe(select(selectFlatChildren));
 
     this.children$.subscribe((children) => {
+      this.modChildSubscribers.forEach(s => s.unsubscribe());
+
       const items = this.children;
       while (items.length > 0) {items.removeAt(0); }
-      this.buildFormControlArray(children).forEach(g => items.push(g));
+
+      this.buildFormControlArray(children).
+      forEach(g => items.push(g));
+
+      this.modChildSubscribers =
+        items.controls.map(c =>
+          c.valueChanges.pipe(debounceTime(TEXT_INPUT_DEBOUNCE_TIME_MS), distinctUntilChanged()).
+          subscribe(value => this.onModChild(value)));
     });
   }
 
@@ -42,8 +55,8 @@ export class ChildListComponent implements OnInit {
     return children.map(child => this.formBuilder.group({id: child.id, name: child.e.name}));
   }
 
-  onModName(childId: number, name: string) {
-    this.store.dispatch(new ModChildName(childId, name));
+  onModChild(child: {id: number, name: string}): void {
+    this.store.dispatch(new ModChildName(child.id, child.name));
   }
 
   onAddNewItem() {
