@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
 
 import { ChildListComponent } from './child-list.component';
 import { Store, StoreModule } from '@ngrx/store';
-import { State } from '../../store/model';
+
 import * as MyReducer from '../../store/reducers';
 
 import { click } from '../../utils/spec-utils';
@@ -15,10 +15,11 @@ import {
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { Mock } from 'protractor/built/driverProviders';
 import { AddAnonymChild, ModChildName, DeleteChild } from '../../store/actions';
 
-import { FormsModule, ReactiveFormsModule, FormControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+import { TEXT_INPUT_DEBOUNCE_TIME_MS } from '../const';
 
 
 describe('ChildListComponent', () => {
@@ -77,7 +78,7 @@ describe('ChildListComponent', () => {
   });
 
 
-  it('should use ActionTypes.ModChildName when user mods a child', () => {
+  it('should use ActionTypes.ModChildName when user mods a child', <any>fakeAsync((): void =>  {
     addChild();
 
     component.children.controls[0].setValue({id: 0, name: 'xyz'});
@@ -86,10 +87,10 @@ describe('ChildListComponent', () => {
 
     reducerSpy.calls.reset();
 
-    click(fixture, 'done');
+    tick(TEXT_INPUT_DEBOUNCE_TIME_MS);
 
     expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new ModChildName(0, 'xyz'));
-  });
+  }));
 
   it('should delete', () => {
     addChild();
