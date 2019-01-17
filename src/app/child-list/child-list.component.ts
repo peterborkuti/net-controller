@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CHILDREN } from '../../mocks/children';
-import { ChildrenOutletContexts } from '@angular/router';
 
 import { Store, select } from '@ngrx/store';
 import { State, Child, FlatDictionary } from '../../store/model';
@@ -10,7 +8,7 @@ import { DeleteChild, AddAnonymChild, ModChildName } from '../../store/actions';
 
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { AbstractControl, FormControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { TEXT_INPUT_DEBOUNCE_TIME_MS } from '../const';
 
 @Component({
@@ -31,14 +29,18 @@ export class ChildListComponent implements OnInit {
     this.children$ = store.pipe(select(selectFlatChildren));
 
     this.children$.subscribe((children) => {
+      // unsubscribe
       this.modChildSubscribers.forEach(s => s.unsubscribe());
 
+      // remove items
       const items = this.children;
       while (items.length > 0) {items.removeAt(0); }
 
-      this.buildFormControlArray(children).
+      // add new items
+      children.map(child => this.formBuilder.group({id: child.id, name: child.e.name})).
       forEach(g => items.push(g));
 
+      // subscribe
       this.modChildSubscribers =
         items.controls.map(c =>
           c.valueChanges.pipe(debounceTime(TEXT_INPUT_DEBOUNCE_TIME_MS), distinctUntilChanged()).
@@ -50,10 +52,6 @@ export class ChildListComponent implements OnInit {
   }
 
   get children(): FormArray { return this.form.get('children') as FormArray; }
-
-  buildFormControlArray(children: FlatDictionary<Child>[]): FormGroup[] {
-    return children.map(child => this.formBuilder.group({id: child.id, name: child.e.name}));
-  }
 
   onModChild(child: {id: number, name: string}): void {
     this.store.dispatch(new ModChildName(child.id, child.name));
