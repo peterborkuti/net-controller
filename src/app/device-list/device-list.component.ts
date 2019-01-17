@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Store, select  } from '@ngrx/store';
-import { State, Child, FlatDictionary, Device, DeviceChild} from '../../store/model';
+import { State, Child, FlatDictionary, Device, DeviceChild, DeviceChildDisplay } from '../../store/model';
 
 import { Observable } from 'rxjs';
 import { DeleteDevice, ModDevice, AddDevice, SetDeviceChild } from '../../store/actions';
-import { selectFlatChildren, selectDeviceChild, selectFlatDevices } from '../../store/selectors';
+import { selectFlatChildren, selectDeviceChild, selectFlatDevices, selectDeviceChildDisplay } from '../../store/selectors';
 
 import { FormControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
@@ -17,8 +17,10 @@ import { FormControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 export class DeviceListComponent implements OnInit {
 
   children$: Observable<FlatDictionary<Child>[]>;
-  devices$: Observable<FlatDictionary<Device>[]>;
+  devices$: Observable<DeviceChildDisplay[]>;
   deviceChild$: Observable<DeviceChild>;
+
+  children: FlatDictionary<Child>[];
 
   form: FormGroup = new FormGroup({
     devices: new FormArray([])
@@ -26,18 +28,21 @@ export class DeviceListComponent implements OnInit {
 
   constructor(private store: Store<State>, private formBuilder: FormBuilder) {
     this.children$ = store.pipe(select(selectFlatChildren));
-    this.devices$ = store.pipe(select(selectFlatDevices));
+    this.devices$ = store.pipe(select(selectDeviceChildDisplay));
     this.deviceChild$ = store.pipe(select(selectDeviceChild));
+
+    this.children$.subscribe(children => this.children = children);
 
     this.devices$.subscribe((devices) => {
       const items = this.devices;
       while (items.length > 0) {items.removeAt(0); }
       this.buildFormControlArray(devices).forEach(g => items.push(g));
+      console.log('devices:', items);
     });
    }
 
-   buildFormControlArray(devices: FlatDictionary<Device>[]): FormGroup[] {
-    return devices.map(device => this.formBuilder.group({id: device.id, name: device.e.name, mac: device.e.mac}));
+   buildFormControlArray(devices: DeviceChildDisplay[]): FormGroup[] {
+    return devices.map(device => this.formBuilder.group(device));
   }
 
   ngOnInit() {

@@ -14,7 +14,7 @@ import {
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AddDevice, ModDevice, DeleteDevice } from '../../store/actions';
+import { AddDevice, ModDevice, DeleteDevice, AddAnonymChild } from '../../store/actions';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -24,6 +24,7 @@ describe('DeviceListComponent', () => {
   let component: DeviceListComponent;
   let fixture: ComponentFixture<DeviceListComponent>;
   let reducerSpy: jasmine.Spy;
+  let store: Store<State>;
 
   beforeEach(async(() => {
     reducerSpy = spyOn(MyReducer, 'reducer').and.callThrough();
@@ -50,6 +51,7 @@ describe('DeviceListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DeviceListComponent);
     component = fixture.componentInstance;
+    store = TestBed.get(Store);
     fixture.detectChanges();
     reducerSpy.calls.reset();
   });
@@ -79,7 +81,7 @@ describe('DeviceListComponent', () => {
   it('should use ActionTypes.ModDevice when user mods a device', () => {
     addDevice();
 
-    component.devices.controls[0].setValue({id: 0, name: 'xyz', mac: '123'});
+    component.devices.controls[0].setValue({id: 0, name: 'xyz', mac: '123', childId: 0});
 
     fixture.detectChanges();
 
@@ -101,5 +103,13 @@ describe('DeviceListComponent', () => {
 
     expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new DeleteDevice(0));
     expect(component.devices.controls.length).toBe(0);
+  });
+
+  it('should change a device-child relationship', () => {
+    expect(store).toBeTruthy();
+    store.dispatch(new AddAnonymChild());
+    store.dispatch(new AddAnonymChild());
+
+    expect(component.children.length).toBe(2);
   });
 });

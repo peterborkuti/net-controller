@@ -41,6 +41,13 @@ export interface DeviceTimeDisplay {
   remainingTime: number;
 }
 
+export interface DeviceChildDisplay {
+  id: DeviceId;
+  name: string;
+  mac: string;
+  childId: ChildId;
+}
+
 export interface State {
   children: Children;
   devices: Devices;

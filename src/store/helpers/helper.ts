@@ -1,4 +1,4 @@
-import { Dictionary, FlatDictionary , Device, DeviceTime, DeviceTimeDisplay} from '../model';
+import { Dictionary, FlatDictionary, Device, DeviceTime, DeviceTimeDisplay, DeviceChild, DeviceChildDisplay, ChildId } from '../model';
 import { isArray } from 'util';
 /**
  * It returns with an id for using when adding new element to a Dictionary.
@@ -55,3 +55,11 @@ export function getDeviceTimeList(device: FlatDictionary<Device>[] , deviceTime:
     ));
 }
 
+export function getDeviceChildList(device: FlatDictionary<Device>[] , deviceChild: DeviceChild): DeviceChildDisplay[] {
+  return device.map(d =>
+    (
+      {
+        id: d.id, name: d.e.name, mac: d.e.mac, childId: deviceChild[d.id]
+      }
+    ));
+}
