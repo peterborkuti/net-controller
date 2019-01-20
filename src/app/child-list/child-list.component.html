@@ -7,8 +7,8 @@
       <mat-list-item role="listitem" formArrayName="children" *ngFor="let child of children.controls; index as i"
         cdkDrag (cdkDragReleased)="onDeleteChild(child.get('id').value)">
         <div [formGroupName]="i">
-          <mat-form-field>
-            <input matInput #nameInput formControlName="name">
+          <mat-form-field class="input-size-marker">
+            <input matInput size="10" #nameInput formControlName="name">
           </mat-form-field>
         </div>
       </mat-list-item>
