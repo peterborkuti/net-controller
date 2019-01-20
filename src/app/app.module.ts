@@ -13,6 +13,8 @@ import {
   MatTableModule
 } from '@angular/material';
 
+import { DragDropModule } from '@angular/cdk/drag-drop';
+
 import { StoreModule } from '@ngrx/store';
 import { reducer } from '../store/reducers';
 
@@ -44,7 +46,8 @@ import { TimeListComponent } from './time-list/time-list.component';
     MatTableModule,
     [StoreModule.forRoot({ state: reducer })],
     StoreDevtoolsModule.instrument(),
-    FormsModule, ReactiveFormsModule
+    FormsModule, ReactiveFormsModule,
+    DragDropModule
   ],
   providers: [],
   bootstrap: [AppComponent]

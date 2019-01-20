@@ -11,6 +11,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { TEXT_INPUT_DEBOUNCE_TIME_MS } from '../const';
 
+import { CdkDrag } from '@angular/cdk/drag-drop';
+
 @Component({
   selector: 'app-child-list',
   templateUrl: './child-list.component.html',
