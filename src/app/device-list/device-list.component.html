@@ -6,23 +6,14 @@
       <mat-list role="list" [formGroup]="form">
           <mat-list-item role="listitem" formArrayName="devices" *ngFor="let device of devices.controls; index as i;">
             <div [formGroupName]="i" *ngIf="(device.get('id').value || '0') as id">
-                <button class="delete" (click)="onDeleteDevice(+id)" mat-icon-button color="primary">
-                    <mat-icon aria-label="Delete device">delete</mat-icon>
-                </button>
-
-                <mat-form-field>
-                    <input #deviceName matInput placeholder="name" formControlName="name">
+                <mat-form-field cdkDrag (cdkDragReleased)="onDeleteDevice(device.get('id').value)">
+                    <input #deviceName matInput placeholder="name" formControlName="name" >
                 </mat-form-field>
 
                 <mat-form-field>
                     <input #deviceMac matInput placeholder="00:00:00:00"
                             size="11"  formControlName="mac">
                 </mat-form-field>
-
-                <button class="done" (click)="onSaveChanges(+id, deviceName.value, deviceMac.value)"
-                    mat-icon-button color="primary">
-                  <mat-icon aria-label="Save name">done</mat-icon>
-                </button>
 
                 <mat-form-field>
                     <mat-select

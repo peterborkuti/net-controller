@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Store, select  } from '@ngrx/store';
-import { State, Child, FlatDictionary, Device, DeviceChild, DeviceChildDisplay } from '../../store/model';
+import { State, Child, FlatDictionary, DeviceChild, DeviceChildDisplay } from '../../store/model';
 
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
 import { DeleteDevice, ModDevice, AddDevice, SetDeviceChild } from '../../store/actions';
-import { selectFlatChildren, selectDeviceChild, selectFlatDevices, selectDeviceChildDisplay } from '../../store/selectors';
+import { selectFlatChildren, selectDeviceChild, selectDeviceChildDisplay } from '../../store/selectors';
 
-import { FormControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { TEXT_INPUT_DEBOUNCE_TIME_MS } from '../const';
 
 @Component({
   selector: 'app-device-list',
@@ -22,6 +25,8 @@ export class DeviceListComponent implements OnInit {
 
   children: FlatDictionary<Child>[];
 
+  private subscribers: Subscription[] = [];
+
   form: FormGroup = new FormGroup({
     devices: new FormArray([])
   });
@@ -34,10 +39,23 @@ export class DeviceListComponent implements OnInit {
     this.children$.subscribe(children => this.children = children);
 
     this.devices$.subscribe((devices) => {
+
+      // unsubscribe
+      this.subscribers.forEach(s => s.unsubscribe());
+
+      // remove items
       const items = this.devices;
       while (items.length > 0) {items.removeAt(0); }
-      this.buildFormControlArray(devices).forEach(g => items.push(g));
-      console.log('devices:', items);
+
+      // add new items
+      devices.map(device => this.formBuilder.group(device)).
+      forEach(g => items.push(g));
+
+      // subscribe
+      this.subscribers =
+        items.controls.map(c =>
+          c.valueChanges.pipe(debounceTime(TEXT_INPUT_DEBOUNCE_TIME_MS), distinctUntilChanged()).
+          subscribe(value => this.onSaveChanges(value)));
     });
    }
 
@@ -54,8 +72,8 @@ export class DeviceListComponent implements OnInit {
     this.store.dispatch(new DeleteDevice(deviceId));
   }
 
-  onSaveChanges(deviceId: number, deviceName: string, deviceMac: string) {
-    this.store.dispatch(new ModDevice(deviceId, deviceName, deviceMac));
+  onSaveChanges(device: DeviceChildDisplay) {
+    this.store.dispatch(new ModDevice(device.id, device.name, device.mac));
   }
 
   onAddNewDeviceChild() {
