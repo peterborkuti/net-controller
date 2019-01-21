@@ -2,19 +2,15 @@
   <mat-card-header>
     <mat-card-title>Children</mat-card-title>
   </mat-card-header>
-  <mat-card-content class="child-content">
-    <mat-list role="list" [formGroup]="form" cdkDropList cdkDropListLockAxis="x">
-      <mat-list-item role="listitem" formArrayName="children" *ngFor="let child of children.controls; index as i"
+  <mat-card-content class="child-content" [formGroup]="form" cdkDropList cdkDropListLockAxis="x">
+      <div formArrayName="children" *ngFor="let child of children.controls; index as i"
         cdkDrag (cdkDragReleased)="onDeleteChild(child.get('id').value)">
-        <div [formGroupName]="i">
-          <mat-form-field class="input-size-marker">
+          <mat-form-field class="input-size-marker" [formGroupName]="i">
             <input matInput size="10" #nameInput formControlName="name">
           </mat-form-field>
-        </div>
-      </mat-list-item>
-      <mat-list-item role="listitem">
-        <button class="add-child" (click)="onAddNewItem()" mat-raised-button color="primary">Add</button>
-      </mat-list-item>
-    </mat-list>
+      </div>
   </mat-card-content>
+  <mat-card-actions>
+      <button class="add-child" (click)="onAddNewItem()" mat-raised-button color="primary">Add</button>
+  </mat-card-actions>
 </mat-card>
