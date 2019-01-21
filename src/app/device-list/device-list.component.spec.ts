@@ -16,7 +16,7 @@ import {
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AddDevice, ModDevice, DeleteDevice, AddAnonymChild } from '../../store/actions';
+import { AddDevice, ModDevice, DeleteDevice, AddAnonymChild, SetDeviceChild } from '../../store/actions';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -114,12 +114,27 @@ describe('DeviceListComponent', () => {
     expect(component.devices.controls.length).toBe(0);
   });
 
-  it('should change a device-child relationship', () => {
+  it('should change a device-child relationship', <any>fakeAsync(() => {
     expect(store).toBeTruthy();
     expect(component.children.length).toBe(0);
     store.dispatch(new AddAnonymChild());
     store.dispatch(new AddAnonymChild());
 
+    addDevice();
+
+    fixture.detectChanges();
+
     expect(component.children.length).toBe(2);
-  });
+
+    reducerSpy.calls.reset();
+
+    component.devices.controls[0].setValue({id: 0, name: 'xyz', mac: '123', childId: 1});
+
+    fixture.detectChanges();
+
+    tick(TEXT_INPUT_DEBOUNCE_TIME_MS);
+
+    expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new SetDeviceChild(0, 1));
+    expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new ModDevice(0, 'xyz', '123'));
+  }));
 });

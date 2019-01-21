@@ -73,16 +73,13 @@ export class DeviceListComponent implements OnInit {
   }
 
   onSaveChanges(device: DeviceChildDisplay) {
+    console.log(device);
     this.store.dispatch(new ModDevice(device.id, device.name, device.mac));
+    this.store.dispatch(new SetDeviceChild(device.id, device.childId));
   }
 
   onAddNewDeviceChild() {
     this.store.dispatch(new AddDevice());
   }
-
-  onSetDeviceChild(deviceId: number, childId: number) {
-    this.store.dispatch(new SetDeviceChild(deviceId, childId));
-  }
-
 
 }

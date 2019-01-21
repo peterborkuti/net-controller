@@ -1,35 +1,29 @@
 <mat-card class="devicelist-container">
-    <mat-card-header>
-        <mat-card-title>Devices</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-list role="list" [formGroup]="form">
-          <mat-list-item role="listitem" formArrayName="devices" *ngFor="let device of devices.controls; index as i;">
-            <div [formGroupName]="i" *ngIf="(device.get('id').value || '0') as id">
-                <mat-form-field class="input-size-marker"
-                  cdkDrag (cdkDragReleased)="onDeleteDevice(device.get('id').value)">
-                    <input size= 10 #deviceName matInput placeholder="name" formControlName="name" >
-                </mat-form-field>
-
-                <mat-form-field class="input-size-marker">
-                    <input #deviceMac matInput placeholder="00:00:00:00"
-                            size="11"  formControlName="mac">
-                </mat-form-field>
-
-                <mat-form-field>
-                    <mat-select
-                      formControlName="childId"
-                      (selectionChange)="onSetDeviceChild(+id, $event.value)">
-                      <mat-option *ngFor="let child of children" [value]="child.id">
-                        {{child.e.name}}
-                      </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            </mat-list-item>
-          <mat-list-item role="listitem">
-              <button class="add-device" (click)="onAddNewDeviceChild()" mat-raised-button color="primary">Add</button>
-          </mat-list-item>
-      </mat-list>
-    </mat-card-content>
-  </mat-card>
+  <mat-card-header>
+    <mat-card-title>Devices</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div [formGroup]="form">
+      <div formArrayName="devices" *ngFor="let device of devices.controls; index as i;">
+        <div [formGroupName]="i" *ngIf="(device.get('id').value || '0') as id">
+            <mat-form-field class="input-size-marker" cdkDrag (cdkDragReleased)="onDeleteDevice(device.get('id').value)">
+              <input size=10 #deviceName matInput placeholder="name" formControlName="name">
+            </mat-form-field>
+            <mat-form-field style="margin-left: 0.5em; margin-right: 0.5em;" class="input-size-marker">
+              <input #deviceMac matInput placeholder="00:00:00:00" size="11" formControlName="mac">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select formControlName="childId">
+                <mat-option *ngFor="let child of children" [value]="child.id">
+                  {{child.e.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+      <button class="add-device" (click)="onAddNewDeviceChild()" mat-raised-button color="primary">Add</button>
+  </mat-card-actions>
+</mat-card>
