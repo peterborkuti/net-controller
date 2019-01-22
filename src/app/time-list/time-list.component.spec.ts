@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
 
 import { TimeListComponent } from './time-list.component';
 
@@ -16,11 +16,9 @@ import {
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AddDevice, ModDevice, DeleteDevice, AddAnonymChild, SetDeviceChild } from '../../store/actions';
+import { AddDevice, ModDevice, SetAllocatedTime, AddExtraTime } from '../../store/actions';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
-import { By } from '@angular/platform-browser';
 
 describe('TimeListComponent', () => {
   let component: TimeListComponent;
@@ -61,4 +59,87 @@ describe('TimeListComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should display devices', () => {
+    expect(component.dataSource.length).toBe(0);
+    store.dispatch(new AddDevice());
+
+    fixture.detectChanges();
+
+    expect(component.dataSource.length).toBe(1);
+
+    const device = {name: 'device1', mac: '10:20:A0:B0'};
+
+    store.dispatch(new ModDevice(0, device.name, device.mac));
+
+    fixture.detectChanges();
+
+    expect(component.dataSource[0].device).toEqual(device);
+
+    const element: HTMLElement = fixture.debugElement.nativeElement;
+    const td = element.querySelector('td');
+    expect(td.textContent).toContain(device.name);
+  });
+
+  it('should display allocated time from store', () => {
+    const time = '10';
+
+    store.dispatch(new AddDevice());
+    store.dispatch(new SetAllocatedTime(0, +time));
+
+    fixture.detectChanges();
+
+    const element: HTMLElement = fixture.debugElement.nativeElement;
+    const input = element.querySelector('input');
+    expect(input.value).toContain(time);
+  });
+
+  it('should display remaining time from store', () => {
+    store.dispatch(new AddDevice());
+    store.dispatch(new AddExtraTime(0));
+
+    fixture.detectChanges();
+
+    const element: HTMLElement = fixture.debugElement.nativeElement;
+    const td = element.querySelectorAll('td');
+    expect(td[2].textContent).toContain('1');
+  });
+
+  it('should add extra time', () => {
+    store.dispatch(new AddDevice());
+
+    fixture.detectChanges();
+
+    reducerSpy.calls.reset();
+
+    const element: HTMLElement = fixture.debugElement.nativeElement;
+    const button = element.querySelector('button');
+    button.click();
+
+    fixture.detectChanges();
+
+    expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new AddExtraTime(0));
+  });
+
+  it('should store user-set allocated time',  <any>fakeAsync(() => {
+    const time = '10';
+
+    store.dispatch(new AddDevice());
+
+    fixture.detectChanges();
+
+    reducerSpy.calls.reset();
+
+    const element: HTMLElement = fixture.debugElement.nativeElement;
+    const input = element.querySelector('input');
+
+    input.value = time;
+
+    fixture.detectChanges();
+
+    tick(TEXT_INPUT_DEBOUNCE_TIME_MS);
+
+    expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new SetAllocatedTime(0, +time));
+  }));
+
 });
