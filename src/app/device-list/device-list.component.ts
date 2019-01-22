@@ -21,7 +21,6 @@ export class DeviceListComponent implements OnInit {
 
   children$: Observable<FlatDictionary<Child>[]>;
   devices$: Observable<DeviceChildDisplay[]>;
-  deviceChild$: Observable<DeviceChild>;
 
   children: FlatDictionary<Child>[];
 
@@ -34,7 +33,6 @@ export class DeviceListComponent implements OnInit {
   constructor(private store: Store<State>, private formBuilder: FormBuilder) {
     this.children$ = store.pipe(select(selectFlatChildren));
     this.devices$ = store.pipe(select(selectDeviceChildDisplay));
-    this.deviceChild$ = store.pipe(select(selectDeviceChild));
 
     this.children$.subscribe(children => this.children = children);
 
@@ -73,7 +71,6 @@ export class DeviceListComponent implements OnInit {
   }
 
   onSaveChanges(device: DeviceChildDisplay) {
-    console.log(device);
     this.store.dispatch(new ModDevice(device.id, device.name, device.mac));
     this.store.dispatch(new SetDeviceChild(device.id, device.childId));
   }
