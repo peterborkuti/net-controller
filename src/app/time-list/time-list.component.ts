@@ -1,11 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Store, select  } from '@ngrx/store';
-import { State, DeviceTimeDisplay} from '../../store/model';
+import { State, DeviceTimeDisplay, DeviceTimeDisplayForm, DeviceId, AllocatedTime } from '../../store/model';
 
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
 import { SetAllocatedTime, AddExtraTime } from '../../store/actions';
 import { selectDeviceTimeDisplay } from '../../store/selectors';
+
+import { FormArray, FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { TEXT_INPUT_DEBOUNCE_TIME_MS } from '../const';
 
 @Component({
   selector: 'app-time-list',
@@ -15,13 +20,32 @@ import { selectDeviceTimeDisplay } from '../../store/selectors';
 export class TimeListComponent implements OnInit {
   deviceTimeDisplay$: Observable<DeviceTimeDisplay[]>;
 
-  dataSource: DeviceTimeDisplay[];
+  dataSource: DeviceTimeDisplayForm[];
   displayedColumns: string[] = ['deviceName', 'allocatedTime', 'remainingTime', 'addExtraTime' ];
 
-  constructor(private store: Store<State>) {
+  private subscribers: Subscription[] = [];
+
+  constructor(private store: Store<State>, private formBuilder: FormBuilder) {
     this.deviceTimeDisplay$ = store.pipe(select(selectDeviceTimeDisplay));
 
-    this.deviceTimeDisplay$.subscribe((ds) => this.dataSource = ds);
+    this.deviceTimeDisplay$.subscribe((ds) => {
+
+      // unsubscribe
+      this.subscribers.forEach(s => s.unsubscribe());
+
+      // add new items
+      this.dataSource = ds.map(device => {
+        const formGroup = AllocatedTime.getControl(device, this.formBuilder);
+
+        return {...device, formGroup: formGroup};
+      });
+
+      // subscribe
+      this.subscribers =
+        this.dataSource.map(d =>
+          d.formGroup.valueChanges.pipe(debounceTime(TEXT_INPUT_DEBOUNCE_TIME_MS), distinctUntilChanged()).
+          subscribe(value => this.onModAllocatedTime(value)));
+    });
    }
 
   ngOnInit() {
@@ -31,8 +55,8 @@ export class TimeListComponent implements OnInit {
     this.store.dispatch(new AddExtraTime(deviceId));
   }
 
-  onModAllocatedTime(deviceId: number, allocatedTime: number) {
-    this.store.dispatch(new SetAllocatedTime(deviceId, allocatedTime));
+  onModAllocatedTime(value: {id: number, allocatedTime: number}) {
+    this.store.dispatch(new SetAllocatedTime(value.id, +value.allocatedTime));
   }
 
 }

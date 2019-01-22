@@ -1,3 +1,7 @@
+import { selectDeviceTimeDisplay } from './selectors';
+
+import { FormGroup, FormBuilder } from '@angular/forms';
+
 export const DEFAULT_ALLOCATED_TIME = 20;
 
 export type ChildId = number;
@@ -39,6 +43,20 @@ export interface DeviceTimeDisplay {
   device: Device;
   allocatedTime: number;
   remainingTime: number;
+}
+
+export interface DeviceTimeDisplayForm extends DeviceTimeDisplay {
+  formGroup: FormGroup;
+}
+
+export class AllocatedTime {
+  static getTime(id: number, allocatedTime: number) {
+    return {id, allocatedTime};
+  }
+
+  static getControl(device: DeviceTimeDisplay, fb: FormBuilder): FormGroup {
+    return fb.group({id: device.id, allocatedTime: device.allocatedTime});
+  }
 }
 
 export interface DeviceChildDisplay {

@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core
 import { TimeListComponent } from './time-list.component';
 
 import { Store, StoreModule } from '@ngrx/store';
-import { State } from '../../store/model';
+import { State, AllocatedTime } from '../../store/model';
 import * as MyReducer from '../../store/reducers';
 
 import { TEXT_INPUT_DEBOUNCE_TIME_MS } from '../const';
@@ -121,8 +121,8 @@ describe('TimeListComponent', () => {
     expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new AddExtraTime(0));
   });
 
-  it('should store user-set allocated time',  <any>fakeAsync(() => {
-    const time = '10';
+  it('should store user-set allocated time when using FromControl layer',  <any>fakeAsync(() => {
+    const allocatedTime = AllocatedTime.getTime(0, 10);
 
     store.dispatch(new AddDevice());
 
@@ -130,16 +130,46 @@ describe('TimeListComponent', () => {
 
     reducerSpy.calls.reset();
 
-    const element: HTMLElement = fixture.debugElement.nativeElement;
-    const input = element.querySelector('input');
-
-    input.value = time;
+    component.dataSource[0].formGroup.setValue(allocatedTime);
 
     fixture.detectChanges();
 
     tick(TEXT_INPUT_DEBOUNCE_TIME_MS);
 
-    expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new SetAllocatedTime(0, +time));
+    expect(MyReducer.reducer).
+      toHaveBeenCalledWith(
+        jasmine.anything(),
+        new SetAllocatedTime(allocatedTime.id, allocatedTime.allocatedTime)
+      );
   }));
 
+  it('should store user-set allocated time when using html input layer',  <any>fakeAsync(() => {
+    const allocatedTime = AllocatedTime.getTime(0, 10);
+
+    store.dispatch(new AddDevice());
+
+    fixture.detectChanges();
+
+    reducerSpy.calls.reset();
+
+    component.dataSource[0].formGroup.setValue(allocatedTime);
+    const element: HTMLElement = fixture.debugElement.nativeElement;
+    const input = element.querySelector('input');
+
+    const e: Event = document.createEvent('Event');
+    e.initEvent('input', false, false);
+
+    input.value = '' + allocatedTime.allocatedTime;
+    input.dispatchEvent(e);
+
+    fixture.detectChanges();
+
+    tick(TEXT_INPUT_DEBOUNCE_TIME_MS);
+
+    expect(MyReducer.reducer).
+      toHaveBeenCalledWith(
+        jasmine.anything(),
+        new SetAllocatedTime(allocatedTime.id, allocatedTime.allocatedTime)
+      );
+  }));
 });
