@@ -7,10 +7,11 @@
       <div formArrayName="devices" *ngFor="let device of devices.controls; index as i;">
         <div [formGroupName]="i" *ngIf="(device.get('id').value || '0') as id">
             <mat-form-field class="input-size-marker" cdkDrag (cdkDragReleased)="onDeleteDevice(device.get('id').value)">
-              <input size=10 #deviceName matInput placeholder="name" formControlName="name">
+              <input [size]="NAME_LENGTH" [maxlength]="NAME_LENGTH" matInput placeholder="name" formControlName="name">
             </mat-form-field>
             <mat-form-field style="margin-left: 0.5em; margin-right: 0.5em;" class="input-size-marker">
-              <input #deviceMac matInput placeholder="00:00:00:00" size="11" formControlName="mac">
+              <input [maxlength]="MAC_LENGTH" [pattern]="MAC_PATTERN"
+                matInput placeholder="00:00:00:00:00:00" [size]="MAC_LENGTH" formControlName="mac">
             </mat-form-field>
             <mat-form-field>
               <mat-select formControlName="childId">

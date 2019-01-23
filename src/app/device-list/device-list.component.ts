@@ -9,8 +9,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DeleteDevice, ModDevice, AddDevice, SetDeviceChild } from '../../store/actions';
 import { selectFlatChildren, selectDeviceChildDisplay } from '../../store/selectors';
 
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { TEXT_INPUT_DEBOUNCE_TIME_MS } from '../const';
+import { FormArray, FormBuilder, FormGroup, AbstractControl, Validators } from '@angular/forms';
+import { TEXT_INPUT_DEBOUNCE_TIME_MS, NAME_SIZE, MAC_REGEXP, MAC_SIZE } from '../const';
 
 @Component({
   selector: 'app-device-list',
@@ -18,6 +18,11 @@ import { TEXT_INPUT_DEBOUNCE_TIME_MS } from '../const';
   styleUrls: ['./device-list.component.css']
 })
 export class DeviceListComponent implements OnInit {
+  NAME_LENGTH = NAME_SIZE;
+  MAC_LENGTH = MAC_SIZE;
+  MAC_PATTERN = MAC_REGEXP;
+
+  macReg = RegExp(MAC_REGEXP);
 
   children$: Observable<FlatDictionary<Child>[]>;
   devices$: Observable<DeviceChildDisplay[]>;
@@ -53,7 +58,7 @@ export class DeviceListComponent implements OnInit {
       this.subscribers =
         items.controls.map(c =>
           c.valueChanges.pipe(debounceTime(TEXT_INPUT_DEBOUNCE_TIME_MS), distinctUntilChanged()).
-          subscribe(value => this.onSaveChanges(value)));
+          subscribe(value => this.onSaveChanges(c, value)));
     });
    }
 
@@ -70,9 +75,33 @@ export class DeviceListComponent implements OnInit {
     this.store.dispatch(new DeleteDevice(deviceId));
   }
 
-  onSaveChanges(device: DeviceChildDisplay) {
-    this.store.dispatch(new ModDevice(device.id, device.name, device.mac));
-    this.store.dispatch(new SetDeviceChild(device.id, device.childId));
+  onSaveChanges(control: AbstractControl, device: DeviceChildDisplay) {
+    const group = control as FormGroup;
+    const err = {};
+
+    const nameControl = group.controls['name'];
+    const name = nameControl.value;
+
+    if (name.length > NAME_SIZE) {
+      err['size'] = 'Name is too long';
+      nameControl.setErrors(err);
+    }
+
+    const macControl = group.controls['mac'];
+    const mac = macControl.value;
+
+    if (!mac || !this.macReg.test(mac)) {
+      err['mac'] = 'Mac address invalid';
+      macControl.setErrors(err);
+    }
+
+    if (Object.keys(err).length === 0) {
+      this.store.dispatch(new ModDevice(device.id, device.name, device.mac));
+      if (device.childId || device.childId === 0) {
+        this.store.dispatch(new SetDeviceChild(device.id, device.childId));
+      }
+    }
+
   }
 
   onAddNewDeviceChild() {
