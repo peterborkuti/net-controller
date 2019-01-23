@@ -85,9 +85,11 @@ describe('DeviceListComponent', () => {
 
 
   it('should use ActionTypes.ModDevice when user mods a device', <any>fakeAsync(() => {
+    const name = 'xyz';
+    const mac = '00:00:00:00:00:00';
     addDevice();
 
-    component.devices.controls[0].setValue({id: 0, name: 'xyz', mac: '123', childId: 0});
+    component.devices.controls[0].setValue({id: 0, name: name, mac: mac, childId: 0});
 
     fixture.detectChanges();
 
@@ -95,7 +97,7 @@ describe('DeviceListComponent', () => {
 
     tick(TEXT_INPUT_DEBOUNCE_TIME_MS);
 
-    expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new ModDevice(0, 'xyz', '123'));
+    expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new ModDevice(0, name, mac));
   }));
 
   it('should delete a device', () => {
@@ -128,13 +130,12 @@ describe('DeviceListComponent', () => {
 
     reducerSpy.calls.reset();
 
-    component.devices.controls[0].setValue({id: 0, name: 'xyz', mac: '123', childId: 1});
+    component.devices.controls[0].setValue({id: 0, name: 'xyz', mac: '00:00:00:00:00:00', childId: 1});
 
     fixture.detectChanges();
 
     tick(TEXT_INPUT_DEBOUNCE_TIME_MS);
 
     expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new SetDeviceChild(0, 1));
-    expect(MyReducer.reducer).toHaveBeenCalledWith(jasmine.anything(), new ModDevice(0, 'xyz', '123'));
   }));
 });
