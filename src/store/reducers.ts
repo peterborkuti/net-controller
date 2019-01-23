@@ -2,6 +2,7 @@ import { State, Child, DEFAULT_STATE, DeviceId, Device, Time } from './model';
 import { ActionsUnion, ActionTypes, SetAllocatedTime } from './actions';
 import * as childHelper from './helpers/child-helper';
 import { addToDictionary, modElementInDictionary, deleteFromDictionary } from './helpers/helper';
+import { NAME_SIZE } from '../app/const';
 
 export function reducer(
   state = DEFAULT_STATE,
@@ -18,7 +19,7 @@ export function reducer(
     case ActionTypes.AddAnonymChild:
       return Object.assign({}, state, { children: childHelper.addAnonymChild(state.children) });
     case ActionTypes.ModChildName: {
-      const child: Child = { name: action.payload.childName };
+      const child: Child = { name: action.payload.childName.slice(0, NAME_SIZE) };
       const children = modElementInDictionary(state.children, action.payload.childId, child);
 
       return Object.assign({}, state, { children: children });
@@ -38,7 +39,7 @@ export function reducer(
 
     case ActionTypes.ModDevice: {
       const id: DeviceId = action.payload.deviceId;
-      const device: Device = { name: action.payload.name, mac: action.payload.mac };
+      const device: Device = { name: action.payload.name.slice(0, NAME_SIZE), mac: action.payload.mac };
 
       return Object.assign({}, state,
         { devices: modElementInDictionary(state.devices, id, device) });
