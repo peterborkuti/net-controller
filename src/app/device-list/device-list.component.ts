@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Store, select  } from '@ngrx/store';
-import { State, Child, FlatDictionary, DeviceChild, DeviceChildDisplay } from '../../store/model';
+import { State, Child, FlatDictionary, DeviceChildDisplay } from '../../store/model';
 
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { DeleteDevice, ModDevice, AddDevice, SetDeviceChild } from '../../store/actions';
-import { selectFlatChildren, selectDeviceChild, selectDeviceChildDisplay } from '../../store/selectors';
+import { selectFlatChildren, selectDeviceChildDisplay } from '../../store/selectors';
 
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { TEXT_INPUT_DEBOUNCE_TIME_MS } from '../const';
