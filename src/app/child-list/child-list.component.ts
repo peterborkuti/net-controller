@@ -8,8 +8,8 @@ import { DeleteChild, AddAnonymChild, ModChildName } from '../../store/actions';
 
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { TEXT_INPUT_DEBOUNCE_TIME_MS } from '../const';
+import { FormArray, FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
+import { TEXT_INPUT_DEBOUNCE_TIME_MS, NAME_SIZE } from '../const';
 
 import { CdkDrag } from '@angular/cdk/drag-drop';
 
@@ -19,6 +19,7 @@ import { CdkDrag } from '@angular/cdk/drag-drop';
   styleUrls: ['./child-list.component.css']
 })
 export class ChildListComponent implements OnInit {
+  INPUT_LENGTH = NAME_SIZE;
   children$: Observable<FlatDictionary<Child>[]>;
 
   form: FormGroup = new FormGroup({
@@ -39,14 +40,21 @@ export class ChildListComponent implements OnInit {
       while (items.length > 0) {items.removeAt(0); }
 
       // add new items
-      children.map(child => this.formBuilder.group({id: child.id, name: child.e.name})).
-      forEach(g => items.push(g));
+      children.map(child => new FormGroup(
+        {
+          id: new FormControl(child.id),
+          name: new FormControl(child.e.name, [Validators.maxLength(NAME_SIZE), Validators.required])
+        })
+      ).
+      forEach(g => {
+        items.push(g);
+      });
 
       // subscribe
       this.modChildSubscribers =
         items.controls.map(c =>
           c.valueChanges.pipe(debounceTime(TEXT_INPUT_DEBOUNCE_TIME_MS), distinctUntilChanged()).
-          subscribe(value => this.onModChild(value)));
+          subscribe(value => this.onModChild(c, value)));
     });
   }
 
@@ -55,8 +63,16 @@ export class ChildListComponent implements OnInit {
 
   get children(): FormArray { return this.form.get('children') as FormArray; }
 
-  onModChild(child: {id: number, name: string}): void {
-    this.store.dispatch(new ModChildName(child.id, child.name));
+  onModChild(control: AbstractControl, child: {id: number, name: any}): void {
+    const group = control as FormGroup;
+    const name = group.controls['name'];
+    name.updateValueAndValidity();
+
+    if (name.valid) {
+      this.store.dispatch(new ModChildName(child.id, child.name));
+    } else {
+      console.log('invalid');
+    }
   }
 
   onAddNewItem() {

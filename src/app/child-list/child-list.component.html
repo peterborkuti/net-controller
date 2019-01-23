@@ -6,7 +6,7 @@
       <div formArrayName="children" *ngFor="let child of children.controls; index as i"
         cdkDrag (cdkDragReleased)="onDeleteChild(child.get('id').value)">
           <mat-form-field class="input-size-marker" [formGroupName]="i">
-            <input matInput size="10" #nameInput formControlName="name">
+            <input matInput [size]="INPUT_LENGTH" [maxlength]="INPUT_LENGTH" formControlName="name">
           </mat-form-field>
       </div>
   </mat-card-content>
