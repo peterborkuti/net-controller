@@ -10,7 +10,7 @@ import { SetAllocatedTime, AddExtraTime } from '../../store/actions';
 import { selectDeviceTimeDisplay } from '../../store/selectors';
 
 import { FormArray, FormBuilder, FormGroup, FormControl } from '@angular/forms';
-import { TEXT_INPUT_DEBOUNCE_TIME_MS } from '../const';
+import { TEXT_INPUT_DEBOUNCE_TIME_MS, NUM_LENGTH, NUM_REGEXP } from '../const';
 
 @Component({
   selector: 'app-time-list',
@@ -18,6 +18,9 @@ import { TEXT_INPUT_DEBOUNCE_TIME_MS } from '../const';
   styleUrls: ['./time-list.component.css']
 })
 export class TimeListComponent implements OnInit {
+  NUM_SIZE = NUM_LENGTH;
+  NUM_PATTERN = NUM_REGEXP;
+  numRegExp = RegExp(NUM_REGEXP);
   deviceTimeDisplay$: Observable<DeviceTimeDisplay[]>;
 
   dataSource: DeviceTimeDisplayForm[];
@@ -44,7 +47,7 @@ export class TimeListComponent implements OnInit {
       this.subscribers =
         this.dataSource.map(d =>
           d.formGroup.valueChanges.pipe(debounceTime(TEXT_INPUT_DEBOUNCE_TIME_MS), distinctUntilChanged()).
-          subscribe(value => this.onModAllocatedTime(value)));
+          subscribe(value => this.onModAllocatedTime(d, value)));
     });
    }
 
@@ -55,8 +58,17 @@ export class TimeListComponent implements OnInit {
     this.store.dispatch(new AddExtraTime(deviceId));
   }
 
-  onModAllocatedTime(value: {id: number, allocatedTime: number}) {
-    this.store.dispatch(new SetAllocatedTime(value.id, +value.allocatedTime));
+  onModAllocatedTime(dataSource: DeviceTimeDisplayForm, value: {id: number, allocatedTime: number}) {
+    const err = {};
+    const timeControl = dataSource.formGroup.controls['allocatedTime'];
+    const time = timeControl.value || 0;
+
+    if (this.numRegExp.test('' + time) && ('' + time).length <= this.NUM_SIZE) {
+      this.store.dispatch(new SetAllocatedTime(value.id, +time));
+    } else {
+      timeControl.setErrors({'num': 'AllocatedTime shuld be small number'});
+    }
+
   }
 
 }

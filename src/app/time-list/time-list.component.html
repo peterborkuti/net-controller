@@ -15,7 +15,7 @@
         <th mat-header-cell *matHeaderCellDef> Allocated<br>Time </th>
         <td mat-cell *matCellDef="let element" class="padding">
             <mat-form-field class="input-size-marker" [formGroup]="element.formGroup">
-                <input #allocatedTime matInput size="5"
+                <input matInput [size]="NUM_SIZE" [pattern]="NUM_PATTERN"
                   formControlName="allocatedTime"
                 >
             </mat-form-field>
